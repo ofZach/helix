@@ -3,11 +3,12 @@
 
 #define MAX_LIGHTS 32
 uniform vec3 lightPoss[MAX_LIGHTS];
+uniform float lightRadiuss[MAX_LIGHTS];
 uniform int numLights;
 //uniform vec3 lightPos;
 varying vec4 vertex;
 //uniform int lightIndex;
-uniform float lightRadius;
+//uniform float lightRadius;
 
 float mapValue( float value, float inputMin, float inputMax, float outputMin, float outputMax ) {
     return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
@@ -22,8 +23,8 @@ void main() {
         vec3 lightDir = lightPoss[i] - vertex.xyz;
         float distance = length( lightDir.xyz );
         
-        if(distance < lightRadius) {
-            float distancePercent = distance/lightRadius;
+        if(distance < lightRadiuss[i]) {
+            float distancePercent = distance / lightRadiuss[i];
             float damping_factor = 1.0 - pow(distancePercent, 3);
             
     //        specular = gl_LightSource[lightIndex].specular;

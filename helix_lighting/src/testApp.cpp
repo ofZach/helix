@@ -6,6 +6,8 @@ helix h;
 //--------------------------------------------------------------
 void testApp::setup() {
     
+    ofBackground(10);
+    
     lightRadius = 280.f;
     
     h.generate();
@@ -15,6 +17,7 @@ void testApp::setup() {
     gui->setColorBack(ofColor(255,255,255,100));
     gui->addLabel("Lights");
     gui->addWidgetDown( new ofxUIToggle( "Render FBOs", false, 16, 16) );
+    gui->addWidgetDown( new ofxUIToggle( "Debug Lights", false, 16, 16) );
     gui->addSlider("Light Radius", 10, 2000, &lightRadius);
     
     gui->loadSettings("settings.xml");
@@ -22,20 +25,50 @@ void testApp::setup() {
     lightShader.load("shaders/lightLine.vert", "shaders/lightLine.frag");
     
     //int width, int height, int radius = 32, float shape = .2, int passes = 1, float downsample = .5
-    blur.setup( ofGetWidth(), ofGetHeight(), 16, .2, 2, .3 );
+    blur.setup( ofGetWidth(), ofGetHeight(), 4, .3, 3, .5 );
     
     dust.loadImage("glow.png");
+    bgImage.loadImage("city0.png");
+    
+    ofSetSphereResolution( 12 );
     
 }
 
 //--------------------------------------------------------------
 void testApp::update() {
-    
+    ofMatrix4x4 camModelViewMatrix = cam.getModelViewMatrix();
+    // set the position of the lights //
+    ofVec3f lightPos = cam.getPosition() + (cam.getLookAtDir() * 50.f);
+    for(int i = 0; i < NUM_LIGHTS; i++) {
+        if(i == 0) {
+            lightPos.set( -200, 0, sin(ofGetElapsedTimef()*.5) * 750.f );
+        } else if( i == 1) {
+            lightPos.set(200, 0, cos(ofGetElapsedTimef() * .7) * 800.f);
+        } else if (i == 2) {
+            lightPos.set( cos(ofGetElapsedTimef()*1.5f)*100.f, sin(ofGetElapsedTimef()*1.5f)*200.f, -sin(ofGetElapsedTimef()*.2f* 600.f));
+        } else if ( i == 3) {
+            lightPos.set( -cos(ofGetElapsedTimef()*1.75f)*300.f, sin(ofGetElapsedTimef()*1.25f)*200.f, sin(ofGetElapsedTimef()*.15f* 700.f));
+        } else if ( i == 4) {
+            lightPos.set( sin(ofGetElapsedTimef()*.75f)*100.f, -cos(ofGetElapsedTimef()*.55f)*100.f, sin(ofGetElapsedTimef()*.15f* 800.f));
+        } else if ( i == 5) {
+            lightPos.set( sin(ofGetElapsedTimef()*.75f)*100.f, cos(ofGetElapsedTimef()*1.55f)*300.f, sin(ofGetElapsedTimef()*.45f* 900.f));
+        }
+        lights[i].setPosition( lightPos );
+        
+        lightRadiuss[i] = lightRadius * (cos(ofGetElapsedTimef() * (((float)i/4.f)+.3f)) *.5f + .7f);
+        
+        
+        ofVec3f lightPosInViewSpace = lights[i].getPosition() * camModelViewMatrix;
+        lightPoss[i] = ( lightPosInViewSpace );
+    }
 }
 
 //--------------------------------------------------------------
 void testApp::draw() {
     
+//    ofBackground(10);
+    ofSetColor(255, 255, 255, 255);
+    bgImage.draw( 0, 0);
     
     glEnable(GL_DEPTH_TEST);
     ofEnableAlphaBlending();
@@ -53,45 +86,24 @@ void testApp::draw() {
 
 //    glDepthMask(false);
     
-    ofVec3f lightPos = cam.getPosition() + (cam.getLookAtDir() * 50.f);
+    ofSetLineWidth(4.f);
     
     
-    ofSetLineWidth(7.f);
-    
-    ofMatrix4x4 camModelViewMatrix = cam.getModelViewMatrix();
     lightShader.begin();
     lightShader.setUniform1f( "lightRadius", lightRadius );
     lightShader.setUniform1i( "numLights", NUM_LIGHTS );
     
     ofVec3f helixMidPt = h.getMidPoint();
-    
-    for(int i = 0; i < NUM_LIGHTS; i++) {
-//        lights[i].enable();
-        if(i == 0) {
-//            ofSetLineWidth(2.f);
-            lightPos.set( -200, 0, sin(ofGetElapsedTimef()*.5) * 400.f );
-        } else if( i == 1) {
-            
-            lightPos.set(200, 0, cos(ofGetElapsedTimef() * .7) * 300.f);
-        }
-        lights[i].setPosition( lightPos );
-        
-        
-        ofVec3f lightPosInViewSpace = lights[i].getPosition() * camModelViewMatrix;
-//        lightPosInViewSpace.getPtr();
-//        lightShader.setUniform1f( "lightRadius", lightRadius );
-//        lightShader.setUniform3fv( "lightPos", &lightPosInViewSpace.getPtr()[0] );
-//        ofSetColor( 50, 255, 255);
-        
-        lightPoss[i] = ( lightPosInViewSpace );
-        
-//        lights[i].disable();
-    }
-    
     lightShader.setUniform3fv("lightPoss", (float*)lightPoss, NUM_LIGHTS );
+    lightShader.setUniform1fv("lightRadiuss", (float*)lightRadiuss, NUM_LIGHTS );
     
+    glDepthMask(false);
+//    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofSetColor(255);
     h.drawCentered(true, false);
     h.drawCentered( false, true );
+    glDepthMask(true);
+//    ofDisableBlendMode();
     
     
     ofDisableLighting();
@@ -102,9 +114,9 @@ void testApp::draw() {
     
     // calculate distance and draw a particle image into the glow fbo //
     glDepthMask(false);
-//    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
     dust.getTextureReference().bind();
-    ofSetColor(255, 255, 255);
+    ofSetColor(255, 255, 255, 255);
     
     float distance = 0;
     for(int i = 0; i < h.lines.size(); i++ ) {
@@ -139,9 +151,7 @@ void testApp::draw() {
     }
     dust.getTextureReference().unbind();
     glDepthMask(true);
-//    ofDisableBlendMode();
-    
-    
+    ofDisableBlendMode();
     
     cam.end();
     
@@ -152,7 +162,9 @@ void testApp::draw() {
     ofSetColor(255);
     ofEnableAlphaBlending();
     blur.begin();
-    ofClear(0, 0, 0, 255);
+//    ofClear(255, 255, 255, 0);
+    ofClear( 0, 0, 0, 255);
+    lightFbo.draw(0, 0, lightFbo.getWidth(), lightFbo.getHeight() );
     lightFbo.draw(0, 0, lightFbo.getWidth(), lightFbo.getHeight() );
     blur.end();
     
@@ -160,12 +172,30 @@ void testApp::draw() {
     ofSetLineWidth(2.f);
     cam.begin();
     
-    ofSetColor(255, 255, 255);
-    for(int i = 0; i < NUM_LIGHTS; i++ ) {
-        lights[i].draw();
+    
+    bool bDebugLights = ((ofxUIToggle*)gui->getWidget("Debug Lights"))->getValue();
+    if(bDebugLights) {
+        ofSetColor(255, 255, 255);
+        ofNoFill();
+        for(int i = 0; i < NUM_LIGHTS; i++ ) {
+            ofPushMatrix(); {
+                ofDrawArrow( ofPoint(0,0,0), ofPoint(1,0,0) );
+                ofTranslate( lights[i].getPosition() );
+                
+                ofMatrix4x4 mat;
+                mat.makeRotationMatrix(ofVec3f(0,0,1), cam.getLookAtDir() );
+                ofPushMatrix();
+                ofMultMatrix(mat.getPtr());
+                ofCircle(0, 0, lightRadiuss[i] );
+                ofPopMatrix();
+                
+                
+            } ofPopMatrix();
+        }
+        ofFill();
     }
     
-    ofSetColor(84,204,254);
+//    ofSetColor(84,204,254);
 //    h.drawCentered( true, false);
 //    h.drawCentered( false, true );
     
@@ -178,12 +208,22 @@ void testApp::draw() {
     
     cam.end();
     
+//    ofSetColor(255, 255, 255);
+//    glDepthMask(false);
+//    ofEnableBlendMode(OF_BLENDMODE_ADD);
+    ofEnableAlphaBlending();
     ofEnableBlendMode( OF_BLENDMODE_ADD );
+//    glBlendFunc(GL_SRC_COLOR, GL_ONE);
+    ofSetColor(84,204,254);
+    blur.getTextureReference().draw(0,768,1024,-768);
+    ofSetColor(255, 255, 255, 255);
     blur.getTextureReference().draw(0,768,1024,-768);
 ////    blur.getTextureReference().draw(0,768,1024,-768);
     ofSetColor(255, 255, 255, 40);
-    lightFbo.draw(0,768,1024,-768 );
+//    lightFbo.draw(0,768,1024,-768 );
     ofDisableBlendMode();
+    
+//    glDepthMask(true);
     
     
     bool bRenderFbos = ((ofxUIToggle*)gui->getWidget("Render FBOs"))->getValue();
@@ -201,7 +241,7 @@ void testApp::draw() {
 void testApp::renderGlowParticle( ofVec3f aPos, float pct ) {
     ofVec3f camUp = cam.getUpDir();
     ofVec3f camRight = cam.getSideDir();
-    float dustScale = .3f;
+    float dustScale = .15f;
     ofVec3f p1, p2, p3, p4;
     
     float sw = dust.getWidth() * dustScale;

@@ -6,6 +6,7 @@ uniform vec3 lightPoss[MAX_LIGHTS];
 varying vec4 vertex;
 uniform int numLights;
 //uniform int lightIndex;
+uniform float lightRadiuss[MAX_LIGHTS];
 
 void main() {
     

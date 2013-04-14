@@ -7,7 +7,7 @@
 
 #include "ofxUI.h"
 
-#define NUM_LIGHTS 2
+#define NUM_LIGHTS 6
 
 class testApp : public ofBaseApp{
 
@@ -33,6 +33,8 @@ class testApp : public ofBaseApp{
     
     ofLight lights[NUM_LIGHTS];
     ofVec3f lightPoss[ NUM_LIGHTS ];
+    float lightRadiuss[ NUM_LIGHTS ];
+//    ofVec3f lightsScreenPos[ NUM_LIGHTS ];
     
     ofShader lightShader;
     ofFbo lightFbo;
@@ -44,5 +46,6 @@ class testApp : public ofBaseApp{
     ofxBlur blur;
     
     ofImage dust;
+    ofImage bgImage;
     
 };
