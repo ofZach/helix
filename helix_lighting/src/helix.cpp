@@ -379,3 +379,81 @@ void helix::drawDebug(){
     ofPopMatrix();
 }
 
+
+
+
+void helix::drawCenteredForGlow( vector<ofLight>& lights,  bool bDrawOuter, bool bDrawInner ){
+    
+    ofPoint midPt;
+    int count = 0;
+    
+    for (int i = 0; i < helix0.size(); i++){
+        midPt += helix0[i];
+        count++;
+    }
+    
+    for (int i = 0; i < helix1.size(); i++){
+        midPt += helix1[i];
+        count++;
+    }
+    
+    for (int i = 0; i < lines.size(); i++){
+        midPt += lines[i].a;
+        midPt += lines[i].b;
+        count += 2;
+    }
+    
+    midPt /= (float)count;
+    
+    
+    
+    ofPushMatrix();
+    ofTranslate(-midPt.x, -midPt.y, -midPt.z);
+    
+    
+    if (bDrawOuter){
+        helix0.draw();
+        helix1.draw();
+    }
+    
+    if (bDrawInner)
+        for (int i = 0; i < lines.size(); i++){
+            
+            float div = 20;
+            for (int j = 0; j < (int)(div-1); j++){
+                ofPoint a = lines[i].a;
+                ofPoint diff = (lines[i].b - lines[i].a)/div;
+                ofLine(a + diff * j, a + diff * (j+1));
+            }
+        }
+    
+    ofPopMatrix();
+    
+    
+}
+
+ofVec3f helix::getMidPoint() {
+    ofPoint midPt;
+    int count = 0;
+    
+    for (int i = 0; i < helix0.size(); i++){
+        midPt += helix0[i];
+        count++;
+    }
+    
+    for (int i = 0; i < helix1.size(); i++){
+        midPt += helix1[i];
+        count++;
+    }
+    
+    for (int i = 0; i < lines.size(); i++){
+        midPt += lines[i].a;
+        midPt += lines[i].b;
+        count += 2;
+    }
+    
+    midPt /= (float)count;
+    
+    return midPt;
+}
+

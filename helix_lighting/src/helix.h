@@ -23,6 +23,9 @@ public:
     void drawCenteredForDOF( ofShader & dofShader, bool bDrawInner = true, bool bDrawOuter = true  );
     void drawCentered(  bool bDrawOuter = true, bool bDrawInner = true );
     void drawCenteredNormals(  bool bDrawInner = true );
+    void drawCenteredForGlow( vector<ofLight>& lights,  bool bDrawOuter = true, bool bDrawInner = true );
+    
+    ofVec3f getMidPoint();
     
     void drawDebug();
 };

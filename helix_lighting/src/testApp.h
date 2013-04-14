@@ -15,6 +15,8 @@ class testApp : public ofBaseApp{
 		void setup();
 		void update();
 		void draw();
+    
+    void renderGlowParticle( ofVec3f aPos, float pct );
 
 		void keyPressed  (int key);
 		void keyReleased(int key);
@@ -30,6 +32,7 @@ class testApp : public ofBaseApp{
     ofEasyCam cam;
     
     ofLight lights[NUM_LIGHTS];
+    ofVec3f lightPoss[ NUM_LIGHTS ];
     
     ofShader lightShader;
     ofFbo lightFbo;
@@ -40,5 +43,6 @@ class testApp : public ofBaseApp{
     
     ofxBlur blur;
     
+    ofImage dust;
     
 };
