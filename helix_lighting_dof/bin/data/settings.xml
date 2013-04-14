@@ -1,0 +1,50 @@
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurOutScale</Name>
+    <Value>0.520833313</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurOutBri</Name>
+    <Value>54.453125000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurOutAlpha</Name>
+    <Value>69.062500000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurInScale</Name>
+    <Value>0.833333373</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurInBri</Name>
+    <Value>14.609375000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>blurInAlpha</Name>
+    <Value>96.953125000</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>DOF_lineWidth</Name>
+    <Value>4.166666985</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>DOF_focus</Name>
+    <Value>302.083374023</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>DOF_aperature</Name>
+    <Value>0.036458332</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>DOF_outer_lineWidth</Name>
+    <Value>8.333333969</Value>
+</Widget>
