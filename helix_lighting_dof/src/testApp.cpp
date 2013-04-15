@@ -11,6 +11,10 @@ void testApp::setup() {
     
     depthOfField.setBlurAmount( 1.5f );
     dofFocalRange = 60.f;
+    blurIntensity = 30;
+    
+    dofAlpha = 105;
+    dofBlurAlpha = 45;
     
     ofBackground(10);
     
@@ -27,7 +31,9 @@ void testApp::setup() {
     gui->addWidgetDown( new ofxUIToggle( "Draw Normals", false, 16, 16) );
     gui->addSlider("Light Radius", 10, 2000, &lightRadius);
     gui->addSlider("DoF Focal Range", 10, 1000, &dofFocalRange );
-    
+    gui->addSlider("Blur Intensity", 0, 255, &blurIntensity);
+    gui->addSlider("DoF Alpha", 0, 255, &dofAlpha);
+    gui->addSlider("DoF Blur Alpha", 0, 255, &dofBlurAlpha);
     gui->loadSettings("settings.xml");
     
     lightShader.load("shaders/lightLine.vert", "shaders/lightLine.frag");
@@ -185,7 +191,7 @@ void testApp::draw() {
     // render phong shading around the outter strip //
     ofEnableBlendMode( OF_BLENDMODE_ADD );
     ofEnableLighting();
-    float lightx = ofMap(ofGetMouseX(), 0, ofGetWidth(), -700, 700, true);
+//    float lightx = ofMap(ofGetMouseX(), 0, ofGetWidth(), -700, 700, true);
     light.setPosition( cos(ofGetElapsedTimef()*1.5) * 700.f, sin(ofGetElapsedTimef()*1.5) * 700.f, 0 );
     
     light.enable();
@@ -250,10 +256,10 @@ void testApp::draw() {
     // render all of the lines with a slight blur
     ofEnableAlphaBlending();
     ofEnableBlendMode(OF_BLENDMODE_ADD);
-    ofSetColor(255, 255, 255, 45);
+    ofSetColor(255, 255, 255, dofBlurAlpha);
     blurDof.getTextureReference().draw( 0, ofGetHeight(), ofGetWidth(), -ofGetHeight() );
     // render the depth of field buffer
-    ofSetColor(255, 255, 255, 105);
+    ofSetColor(255, 255, 255, dofAlpha);
     depthOfField.getFbo().draw( 0, ofGetHeight(), ofGetWidth(), -ofGetHeight() );
     
     ofDisableBlendMode();
@@ -262,7 +268,7 @@ void testApp::draw() {
     ofEnableBlendMode( OF_BLENDMODE_ADD );
     ofSetColor(84,204,254);
     blur.getTextureReference().draw(0,0);
-    ofSetColor(255, 255, 255, 25);
+    ofSetColor(255, 255, 255, blurIntensity);
     blur.getTextureReference().draw(0,0);
 //    ofSetColor(255, 255, 255, 40);
 //    lightFbo.draw(0,768,1024,-768 );

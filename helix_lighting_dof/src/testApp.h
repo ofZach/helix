@@ -47,6 +47,9 @@ public:
     ofxUICanvas *gui;
     
     float lightRadius;
+    float blurIntensity;
+    float dofAlpha;
+    float dofBlurAlpha;
     
     ofxBlur blur;
     ofxBlur blurDof;
