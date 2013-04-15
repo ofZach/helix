@@ -289,7 +289,6 @@ void helix::drawCentered(  bool bDrawOuter, bool bDrawInner ){
     
     ofPopMatrix();
     
-        
 }
 
 
