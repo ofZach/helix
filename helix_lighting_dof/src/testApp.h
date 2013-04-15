@@ -44,6 +44,7 @@ public:
     float lightRadius;
     
     ofxBlur blur;
+    ofxBlur blurDof;
     
     ofImage dust;
     ofImage bgImage;

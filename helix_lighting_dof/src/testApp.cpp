@@ -6,7 +6,10 @@ helix h;
 //--------------------------------------------------------------
 void testApp::setup() {
     
-    // allocation of fbos in windowResized function //
+    lightFbo.allocate( ofGetWidth(), ofGetHeight(), GL_RGBA );
+    depthOfField.setup( ofGetWidth(), ofGetHeight() );
+    
+    depthOfField.setBlurAmount( 1.5f );
     
     ofBackground(10);
     
@@ -28,6 +31,7 @@ void testApp::setup() {
     
     //int width, int height, int radius = 32, float shape = .2, int passes = 1, float downsample = .5
     blur.setup( ofGetWidth(), ofGetHeight(), 4, .3, 3, .5 );
+    blurDof.setup( ofGetWidth(), ofGetHeight(), 4, .3, 1, .8 );
     
     dust.loadImage("glow.png");
     bgImage.loadImage("city0.png");
@@ -67,8 +71,9 @@ void testApp::update() {
     //swim the depth of field
 //	depthOfField.setFocalDistance(ofMap(sin(ofGetElapsedTimef()/2),-1,1, 20, 250));
     
-    depthOfField.setFocalDistance( ofMap((float)ofGetMouseX() / (float)ofGetWidth(), 0, 1, 100, 300.f, true) );
-    depthOfField.setFocalRange( ofMap( sin(ofGetElapsedTimef() * .25), -1, 1.f, 50, 500, true ) );
+//    depthOfField.setFocalDistance( ofMap((float)ofGetMouseX() / (float)ofGetWidth(), 0, 1, 100, 300.f, true) );
+    depthOfField.setFocalDistance( ofMap( cos(ofGetElapsedTimef()), -1, 1, 100, 300.f, true) );
+    depthOfField.setFocalRange( ofMap( sin(ofGetElapsedTimef() * .75), -1, 1.f, 20, 150, true ) );
 }
 
 //--------------------------------------------------------------
@@ -167,6 +172,7 @@ void testApp::draw() {
     
     glDisable( GL_DEPTH_TEST );
     
+    
     ofSetColor(255);
     ofEnableAlphaBlending();
     blur.begin();
@@ -177,17 +183,46 @@ void testApp::draw() {
     blur.end();
     
     
+    
+    // add a slight blur to everything, to reduce hard edges 
+    blurDof.begin();
+    ofClear(0, 0, 0, 255);
+    glDepthMask(false);
+    //    ofEnableBlendMode(OF_BLENDMODE_ADD);
+//    ofSetColor(255);
+    ofSetColor(84,204,254);
+    cam.begin();
+    h.drawCentered(true, false);
+    h.drawCentered( false, true );
+    cam.end();
+    glDepthMask(true);
+    blurDof.end();
+    
+    
+    
+    
 //    ofSetColor(84,204,254);
 //    h.drawCentered( true, false);
 //    h.drawCentered( false, true );
     
-    depthOfField.begin(); 
+    ofEnableAlphaBlending();
+//    blurDof.begin();
+//    ofClear( 0, 0, 0, 255);
+    depthOfField.begin();
     cam.begin( depthOfField.getDimensions() );
     ofSetColor(84,204,254);
     h.drawCentered( true, false);
     h.drawCentered( false, true );
     cam.end();
     depthOfField.end();
+//    blurDof.end();
+    
+    
+    //    blurDof.getTextureReference().draw(0,0);
+    ofDisableBlendMode();
+    ofEnableAlphaBlending();
+//    ofSetColor(255, 255, 255, 255);
+//    blurDof.getTextureReference().draw(0,0);
     
 //    ofSetColor(255, 255, 255);
 //    glDepthMask(false);
@@ -195,9 +230,13 @@ void testApp::draw() {
     ofEnableAlphaBlending();
     
     ofEnableBlendMode(OF_BLENDMODE_ADD);
-    ofSetColor(255, 255, 255, 255);
+    ofSetColor(255, 255, 255, 25);
+    blurDof.getTextureReference().draw(0,0);
+    
+    ofSetColor(255, 255, 255, 125);
     depthOfField.getFbo().draw(0, 0);
-    ofDisableBlendMode();
+    
+
     
     
     
@@ -235,7 +274,7 @@ void testApp::draw() {
     ofSetColor(84,204,254);
 //    blur.getTextureReference().draw(0,768,1024,-768);
     blur.getTextureReference().draw(0,0);
-    ofSetColor(255, 255, 255, 255);
+    ofSetColor(255, 255, 255, 95);
     blur.getTextureReference().draw(0,0);
 //    blur.getTextureReference().draw(0,768,1024,-768);
 ////    blur.getTextureReference().draw(0,768,1024,-768);
@@ -327,9 +366,7 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h) {
-//    cout << "windowResized :: w = " << w << " h = " << h << endl;
-    lightFbo.allocate( w, h, GL_RGBA );
-    depthOfField.setup( w, h );
+    
 }
 
 //--------------------------------------------------------------
