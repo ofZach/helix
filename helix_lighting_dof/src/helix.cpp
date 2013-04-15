@@ -12,6 +12,8 @@
 
     
 void helix::generate(){
+    
+    lineImage.loadImage("line.png");
         
     
     //float radius = 200;
@@ -25,16 +27,35 @@ void helix::generate(){
         float y = r * sin(  pct * TWO_PI * 2 );
         float z = pct * 900;
         
-        ofPoint pa(x,y, z);
+        ofPoint pa(x, y, z);
         
         helix0.addVertex(  ofPoint(x,y,z) );
-        
         
         x = r * cos(  pct * TWO_PI * 2 + PI );
         y = r * sin(  pct * TWO_PI * 2 + PI);
         
         ofPoint pb(x,y,z);
         
+        float tcoordx = pct * 64.f * 20.f;
+        
+        ofVec3f normal = pa - pb;
+        normal.normalize();
+        strip1.addVertex( ofPoint(pa.x, pa.y, pa.z - 6) );
+        strip1.addNormal( normal );
+        strip1.addTexCoord( ofVec2f(tcoordx, 0) );
+        
+        strip1.addVertex( ofPoint(pa.x, pa.y, pa.z + 6) );
+        strip1.addNormal( normal );
+        strip1.addTexCoord( ofVec2f(tcoordx, 64) );
+        
+        normal *= -1.f;
+        strip2.addVertex( ofPoint( pb.x, pb.y, pb.z - 6) );
+        strip2.addNormal( normal );
+        strip2.addTexCoord( ofVec2f(tcoordx, 0) );
+        
+        strip2.addVertex( ofPoint( pb.x, pb.y, pb.z + 6) );
+        strip2.addNormal( normal );
+        strip2.addTexCoord( ofVec2f(tcoordx, 64) );
         
         if (i % 3 == 0){
             
@@ -47,6 +68,12 @@ void helix::generate(){
         helix1.addVertex(  ofPoint(x,y, z) );
         
     }
+    
+    strip1.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
+    strip1.setupIndicesAuto();
+    
+    strip2.setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
+    strip2.setupIndicesAuto();
     
 }
 
@@ -196,28 +223,7 @@ void helix::drawCenteredForDOF( ofShader & dofShader, bool bDrawInner, bool bDra
 void helix::drawCenteredNormals(  bool bDrawInner ){
     
     
-    ofPoint midPt;
-    int count = 0;
-    
-    for (int i = 0; i < helix0.size(); i++){
-        midPt += helix0[i];
-        count++;
-    }
-    
-    for (int i = 0; i < helix1.size(); i++){
-        midPt += helix1[i];
-        count++;
-    }
-    
-    for (int i = 0; i < lines.size(); i++){
-        midPt += lines[i].a;
-        midPt += lines[i].b;
-        count += 2;
-    }
-    
-    midPt /= (float)count;
-    
-    
+    ofPoint midPt = getMidPoint();
     
     ofPushMatrix();
     ofTranslate(-midPt.x, -midPt.y, -midPt.z);
@@ -232,28 +238,44 @@ void helix::drawCenteredNormals(  bool bDrawInner ){
 //        }
 //    
     
-    
-    glBegin(GL_LINE_STRIP);
-    
-    for (int i = 0; i < helix0.size()-1; i++){
-        
-        
-        ofVec3f temp0 = helix0[i];
-        ofVec3f temp1 = helix0[i+1];
-        temp0.normalize();
-        temp1.normalize();
-        
-        ofVec3f normal = (temp0.cross(temp1)).normalize();
-        
-        
-        glNormal3f(normal.x, normal.y, normal.z);
-        glVertex3f(helix0[i].x, helix0[i].y, helix0[i].z);
-        
-        //ofLine(helix0[i],  helix0[i] - (temp0.cross(temp1)).normalize() * 10.0);
-        
+    glBegin( GL_LINES );
+    for(int i = 0; i < strip1.getNumNormals(); i++ ) {
+        ofVec3f normal = strip1.getNormal( i );
+        normal *= 26.f;
+        ofVec3f vert = strip1.getVertex( i );
+        glVertex3f( vert.x, vert.y, vert.z );
+        glVertex3f( vert.x+normal.x, vert.y+normal.y, vert.z+normal.z );
     }
     
+    for(int i = 0; i < strip2.getNumNormals(); i++ ) {
+        ofVec3f normal = strip2.getNormal( i );
+        normal *= 26.f;
+        ofVec3f vert = strip2.getVertex( i );
+        glVertex3f( vert.x, vert.y, vert.z );
+        glVertex3f( vert.x+normal.x, vert.y+normal.y, vert.z+normal.z );
+    }
     glEnd();
+//    glBegin(GL_LINE_STRIP);
+//    
+//    for (int i = 0; i < helix0.size()-1; i++){
+//        
+//        
+//        ofVec3f temp0 = helix0[i];
+//        ofVec3f temp1 = helix0[i+1];
+//        temp0.normalize();
+//        temp1.normalize();
+//        
+//        ofVec3f normal = (temp0.cross(temp1)).normalize();
+//        
+//        
+//        glNormal3f(normal.x, normal.y, normal.z);
+//        glVertex3f(helix0[i].x, helix0[i].y, helix0[i].z);
+//        
+//        //ofLine(helix0[i],  helix0[i] - (temp0.cross(temp1)).normalize() * 10.0);
+//        
+//    }
+//    
+//    glEnd();
     
     
     ofPopMatrix();
@@ -271,9 +293,13 @@ void helix::drawCentered(  bool bDrawOuter, bool bDrawInner ){
     ofTranslate(-midPt.x, -midPt.y, -midPt.z);
     
     
-    if (bDrawOuter){
-        helix0.draw();
-        helix1.draw();
+    if (bDrawOuter) {
+        lineImage.getTextureReference().bind();
+        strip1.draw();
+        strip2.draw();
+        lineImage.getTextureReference().unbind();
+//        helix0.draw();
+//        helix1.draw();
     }
 
     if (bDrawInner) {

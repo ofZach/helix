@@ -13,6 +13,8 @@
 		2E21695E171B139F0019BE08 /* lightLine.vert in Sources */ = {isa = PBXBuildFile; fileRef = 2E21695C171B139F0019BE08 /* lightLine.vert */; };
 		2E216979171B6DDF0019BE08 /* ofxBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E216975171B6DDF0019BE08 /* ofxBlur.cpp */; };
 		2E216CB4171B6E220019BE08 /* ofxDOF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E216CA5171B6E220019BE08 /* ofxDOF.cpp */; };
+		2E216CBD171BC1B50019BE08 /* phongShader.frag in Sources */ = {isa = PBXBuildFile; fileRef = 2E216CBB171BC1B50019BE08 /* phongShader.frag */; };
+		2E216CBE171BC1B50019BE08 /* phongShader.vert in Sources */ = {isa = PBXBuildFile; fileRef = 2E216CBC171BC1B50019BE08 /* phongShader.vert */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -128,6 +130,8 @@
 		2E216CA3171B6E220019BE08 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		2E216CA5171B6E220019BE08 /* ofxDOF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDOF.cpp; sourceTree = "<group>"; };
 		2E216CA6171B6E220019BE08 /* ofxDOF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxDOF.h; sourceTree = "<group>"; };
+		2E216CBB171BC1B50019BE08 /* phongShader.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = phongShader.frag; sourceTree = "<group>"; };
+		2E216CBC171BC1B50019BE08 /* phongShader.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = phongShader.vert; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -417,6 +421,8 @@
 		FDA0791016F105EF00B2CAF7 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				2E216CBB171BC1B50019BE08 /* phongShader.frag */,
+				2E216CBC171BC1B50019BE08 /* phongShader.vert */,
 				2E21695B171B139F0019BE08 /* lightLine.frag */,
 				2E21695C171B139F0019BE08 /* lightLine.vert */,
 				2E216957171B13280019BE08 /* glowLine.frag */,
@@ -527,6 +533,8 @@
 				2E21695E171B139F0019BE08 /* lightLine.vert in Sources */,
 				2E216979171B6DDF0019BE08 /* ofxBlur.cpp in Sources */,
 				2E216CB4171B6E220019BE08 /* ofxDOF.cpp in Sources */,
+				2E216CBD171BC1B50019BE08 /* phongShader.frag in Sources */,
+				2E216CBE171BC1B50019BE08 /* phongShader.vert in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

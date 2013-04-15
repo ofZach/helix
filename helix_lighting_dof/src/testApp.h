@@ -30,11 +30,16 @@ public:
     
     ofEasyCam cam;
     
-    ofLight lights[NUM_LIGHTS];
+    ofMaterial material;
+    ofLight light;
+    ofVec3f lightPosViewSpace[ NUM_LIGHTS ];
     ofVec3f lightPoss[ NUM_LIGHTS ];
     float lightRadiuss[ NUM_LIGHTS ];
     
     ofxDOF depthOfField;
+    float dofFocalRange;
+    
+    ofShader phongShader;
     
     ofShader lightShader;
     ofFbo lightFbo;

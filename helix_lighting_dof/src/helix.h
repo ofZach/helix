@@ -18,6 +18,11 @@ public:
     ofPolyline helix1;
     vector < line > lines;
     
+    ofMesh strip1;
+    ofMesh strip2;
+    
+    ofImage lineImage;
+    
     void generate();
     
     void drawCenteredForDOF( ofShader & dofShader, bool bDrawInner = true, bool bDrawOuter = true  );
